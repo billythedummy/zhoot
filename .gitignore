@@ -1,13 +1,15 @@
-# Ignore everything
+# Ignore everything except
 *
 
 # Git stuff
 !.git*
 
+# subdirectories pattern
+!*/
+
 # But verilog src files
-!zhoot*
 !*.v
 !*.sv
 
 # And assets
-!assets*
+!assets/*
