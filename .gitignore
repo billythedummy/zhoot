@@ -1,0 +1,13 @@
+# Ignore everything
+*
+
+# Git stuff
+!.git*
+
+# But verilog src files
+!zhoot*
+!*.v
+!*.sv
+
+# And assets
+!assets*
