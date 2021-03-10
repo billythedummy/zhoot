@@ -1,2 +1,0 @@
-import enemy_def::*;
-

@@ -22,27 +22,25 @@ module enemy_render (
     input logic [8:0] y_me,
     output logic render
 );
-    localparam D = 64; // width/height of enemy
-    localparam LOG_D = $clog2(D);
 
-    logic [0:D-1] alive [0:D-1];
-    logic [0:D-1] dying [0:D-1];
+    logic [0:ENEMY_D-1] alive [0:ENEMY_D-1];
+    logic [0:ENEMY_D-1] dying [0:ENEMY_D-1];
 
-    logic [LOG_D-1:0] x_ind;
-    logic [LOG_D-1:0] y_ind;
+    logic [LOG_ENEMY_D-1:0] x_ind;
+    logic [LOG_ENEMY_D-1:0] y_ind;
     logic oob;
 
     always_ff @(posedge clk) begin
-        x_ind <= LOG_D'(x - x_me);
-        y_ind <= LOG_D'(y - y_me);
-        oob <= (x < x_me) | (x >= x_me + D) | (y < y_me) | (y >= y_me + D);
+        x_ind <= LOG_ENEMY_D'(x - x_me);
+        y_ind <= LOG_ENEMY_D'(y - y_me);
+        oob <= (x < x_me) | (x >= x_me + ENEMY_D) | (y < y_me) | (y >= y_me + ENEMY_D);
     end
 
     always_comb
         case (state)
-            DEAD: render = 1'b0;
-            ALIVE: render = oob ? 1'b0 : alive[y_ind][x_ind];
-            DYING: render = oob ? 1'b0 : dying[y_ind][x_ind];
+            S_DEAD: render = 1'b0;
+            S_ALIVE: render = oob ? 1'b0 : alive[y_ind][x_ind];
+            S_DYING: render = oob ? 1'b0 : dying[y_ind][x_ind];
         endcase
 
     initial begin
@@ -195,7 +193,7 @@ module enemy_render_test();
     end
 
     initial begin
-        state = ALIVE;
+        state = S_ALIVE;
         x_me = 10'd69; y_me = 9'd96;
         // out of bounds
         x = 10'd0; y = 9'd0;

@@ -45,7 +45,7 @@ module DE1_SoC (
 			 .VGA_R, .VGA_G, .VGA_B, .VGA_BLANK_N,
 			 .VGA_CLK, .VGA_HS, .VGA_SYNC_N, .VGA_VS);
 
-	enemy_render er (.clk(CLOCK_50), .x, .y, .state(ALIVE), .x_me(10'd100), .y_me(9'd50), .render(re));
+	enemy_render er (.clk(CLOCK_50), .x, .y, .state(S_ALIVE), .x_me(10'd100), .y_me(9'd50), .render(re));
 	
 	wire button_left;
 	wire [5:0] bin_x, bin_y;
@@ -56,14 +56,15 @@ module DE1_SoC (
 	);
 	wire [9:0] shoot_x;
 	wire [8:0] shoot_y;
-	wire shot;
+	wire shot, gun_cd;
 	gun #(.BIN_W(6), .BIN_SIZE(10)) gun0 (
 		.clk(CLOCK_50), .reset,
 		.start(~KEY[0]),
 		.x, .y,
 		.bin_x, .bin_y, .button_left,
 		.shoot_x, .shoot_y, .shot,
-		.render(rc)
+		.render(rc),
+		.cd(gun_cd)
 	);
 
 	// AUDIO
@@ -115,6 +116,6 @@ module DE1_SoC (
 	assign HEX5 = '1;
 	assign reset = SW[9];
 
-	assign LEDR[0] = shot;
+	assign LEDR[0] = gun_cd;
 	assign LEDR[9] = reset;
 endmodule

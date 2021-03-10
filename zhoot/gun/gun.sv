@@ -8,7 +8,8 @@ module gun #(parameter BIN_W=6, BIN_SIZE=10) (
     output logic [9:0] shoot_x,
     output logic [8:0] shoot_y,
     output logic shot,
-    output logic render
+    output logic render,
+    output logic cd
 );
     localparam CD_TICKS_50M = 19_999_999;
     localparam CROSSHAIR_RADIUS = 32;
@@ -57,6 +58,7 @@ module gun #(parameter BIN_W=6, BIN_SIZE=10) (
     assign shoot_x = center_mouse_x;
     assign shoot_y = center_mouse_y;
     assign shot = ps == S_IDLE & button_left;
+    assign cd = ps == S_CD;
 endmodule
 
 module gun_test();
@@ -65,7 +67,7 @@ module gun_test();
     logic [8:0] y, shoot_y;
     logic [5:0] bin_x, bin_y;
     logic button_left;
-    logic shot, render;
+    logic shot, render, cd;
 
     gun dut (.*);
 
