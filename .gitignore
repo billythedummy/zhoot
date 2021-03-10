@@ -3,3 +3,4 @@ simulation/*
 output_files/*
 incremental_db/*
 greybox_tmp/*
+DE1_SoC_nativelink_simulation.rpt

@@ -47,18 +47,24 @@ module DE1_SoC (
 
 	enemy_render er (.clk(CLOCK_50), .x, .y, .state(ALIVE), .x_me(10'd100), .y_me(9'd50), .render(re));
 	
-	wire button_left, button_right, button_middle;
+	wire button_left;
 	wire [5:0] bin_x, bin_y;
 	ps2 #(.WIDTH(64), .HEIGHT(48), .BIN(10), .HYSTERESIS(3)) mouse (
 		.start(~KEY[0]), .reset, .CLOCK_50, .PS2_CLK, .PS2_DAT,
-		.button_left, .button_right, .button_middle,
+		.button_left, .button_right(), .button_middle(),
 		.bin_x, .bin_y
 	);
-	logic [9:0] mouse_x;
-	assign mouse_x = 10'(bin_x * 10 - 32);
-	logic [8:0] mouse_y; 
-	assign mouse_y = 9'(bin_y * 10 - 32);
-	crosshair_render cr (.clk(CLOCK_50), .x, .y, .x_me(mouse_x), .y_me(mouse_y), .render(rc));
+	wire [9:0] shoot_x;
+	wire [8:0] shoot_y;
+	wire shot;
+	gun #(.BIN_W(6), .BIN_SIZE(10)) gun0 (
+		.clk(CLOCK_50), .reset,
+		.start(~KEY[0]),
+		.x, .y,
+		.bin_x, .bin_y, .button_left,
+		.shoot_x, .shoot_y, .shot,
+		.render(rc)
+	);
 
 	// AUDIO
 	clock_generator aud_clock_gen (
@@ -93,7 +99,7 @@ module DE1_SoC (
 		.AUD_DACDAT
 	);
 
-	gunshot_player gp (.clk(CLOCK_50), .reset, .shot(button_left), .aud_write_ready, .aud_write, .aud_write_d);
+	gunshot_player gp (.clk(CLOCK_50), .reset, .shot, .aud_write_ready, .aud_write, .aud_write_d);
 	
 	// FINAL RENDER OR
 	assign render = rc | re;
@@ -109,6 +115,6 @@ module DE1_SoC (
 	assign HEX5 = '1;
 	assign reset = SW[9];
 
-	assign LEDR[0] = button_left;
+	assign LEDR[0] = shot;
 	assign LEDR[9] = reset;
 endmodule
