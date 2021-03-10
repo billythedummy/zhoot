@@ -1,5 +1,5 @@
 module gun #(parameter BIN_W=6, BIN_SIZE=10) (
-    input logic clk, reset, start,
+    input logic clk, reset,
     input logic [9:0] x,
     input logic [8:0] y,
     input logic [BIN_W-1:0] bin_x,
@@ -11,7 +11,7 @@ module gun #(parameter BIN_W=6, BIN_SIZE=10) (
     output logic render,
     output logic cd
 );
-    localparam CD_TICKS_50M = 19_999_999;
+    localparam CD_TICKS_50M = 9_999_999;
     localparam CROSSHAIR_RADIUS = 32;
     localparam MAX_H = 480;
 
@@ -21,15 +21,15 @@ module gun #(parameter BIN_W=6, BIN_SIZE=10) (
         else ps <= ns;
 
     // convert bin coords to screen coords
-    logic [9:0] center_mouse_x;
-    assign center_mouse_x = 10'(bin_x * BIN_SIZE);
     logic [9:0] top_left_mouse_x;
-    assign top_left_mouse_x = center_mouse_x - 10'(CROSSHAIR_RADIUS);
-    logic [8:0] center_mouse_y;
+    assign top_left_mouse_x = 10'(bin_x * BIN_SIZE);
+    logic [9:0] center_mouse_x;
+    assign center_mouse_x = top_left_mouse_x + 10'(CROSSHAIR_RADIUS);
     // mouse-y is inverted
-    assign center_mouse_y = 9'(MAX_H) - 9'(bin_y * BIN_SIZE);
     logic [8:0] top_left_mouse_y;
-    assign top_left_mouse_y = center_mouse_y - 9'(CROSSHAIR_RADIUS);
+    assign top_left_mouse_y = 9'(MAX_H) - 9'(bin_y * BIN_SIZE);
+    logic [8:0] center_mouse_y;
+    assign center_mouse_y = top_left_mouse_y + 9'(CROSSHAIR_RADIUS);
 
     // cooldown counter
     logic [$clog2(CD_TICKS_50M)-1 : 0] cd_cnt;
@@ -62,7 +62,7 @@ module gun #(parameter BIN_W=6, BIN_SIZE=10) (
 endmodule
 
 module gun_test();
-    logic clk, reset, start;
+    logic clk, reset;
     logic [9:0] x, shoot_x;
     logic [8:0] y, shoot_y;
     logic [5:0] bin_x, bin_y;

@@ -668,6 +668,9 @@ set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to VGA_VS
 set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
 set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
 set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
+set_global_assignment -name SYSTEMVERILOG_FILE zhoot/enemy/enemy_x_gen.sv
+set_global_assignment -name SYSTEMVERILOG_FILE zhoot/enemy/enemy_move_ctrl.sv
+set_global_assignment -name SYSTEMVERILOG_FILE zhoot/enemy/onehot_encoder.sv
 set_global_assignment -name SYSTEMVERILOG_FILE video/video_driver.sv
 set_global_assignment -name VERILOG_FILE video/altera_up_avalon_video_vga_timing.v
 set_global_assignment -name VERILOG_FILE audio/clock_generator.v
@@ -700,4 +703,6 @@ set_global_assignment -name SYSTEMVERILOG_FILE zhoot/upctr.sv
 set_global_assignment -name SDC_FILE DE1_SOC_golden_top.sdc
 set_global_assignment -name SYSTEMVERILOG_FILE DE1_SoC.sv
 set_global_assignment -name QIP_FILE zhoot/sfx/gunshot_rom.qip
+set_global_assignment -name ALLOW_ANY_RAM_SIZE_FOR_RECOGNITION ON
+set_global_assignment -name ALLOW_ANY_ROM_SIZE_FOR_RECOGNITION ON
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top

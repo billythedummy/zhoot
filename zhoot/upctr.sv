@@ -1,4 +1,4 @@
-// Up counter with increment and reset signal and custom max L
+// wrapping up counter with increment and reset signal and custom max L
 module upctr #(parameter W=3, L=2**W - 1) (
     input wire clk, reset,
     input wire inc,

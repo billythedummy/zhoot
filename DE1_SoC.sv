@@ -34,8 +34,9 @@ module DE1_SoC (
 	output AUD_DACDAT;
 
 	logic reset;
+	logic start;
 	logic render;
-	logic re, rc;
+	logic render_enemy, render_crosshair;
 	logic [9:0] x;
 	logic [8:0] y;
 	logic [7:0] r, g, b;
@@ -45,25 +46,37 @@ module DE1_SoC (
 			 .VGA_R, .VGA_G, .VGA_B, .VGA_BLANK_N,
 			 .VGA_CLK, .VGA_HS, .VGA_SYNC_N, .VGA_VS);
 
-	enemy_render er (.clk(CLOCK_50), .x, .y, .state(S_ALIVE), .x_me(10'd100), .y_me(9'd50), .render(re));
+	localparam N_ENEMY = 8;
+	logic killed;
+	logic [N_ENEMY-1:0] enemy_alive;
+	logic [8:0] enemy_y [0:N_ENEMY-1];
+	enemies nme (
+		.clk(CLOCK_50), .reset, .start,
+		.x, .y,
+		.shoot_x, .shoot_y, .shot,
+		.gameover(1'b0),
+		.killed,
+		.render(render_enemy),
+		.enemy_alive,
+		.enemy_y
+	);
 	
-	wire button_left;
-	wire [5:0] bin_x, bin_y;
+	logic button_left;
+	logic [5:0] bin_x, bin_y;
 	ps2 #(.WIDTH(64), .HEIGHT(48), .BIN(10), .HYSTERESIS(3)) mouse (
-		.start(~KEY[0]), .reset, .CLOCK_50, .PS2_CLK, .PS2_DAT,
+		.start, .reset, .CLOCK_50, .PS2_CLK, .PS2_DAT,
 		.button_left, .button_right(), .button_middle(),
 		.bin_x, .bin_y
 	);
-	wire [9:0] shoot_x;
-	wire [8:0] shoot_y;
-	wire shot, gun_cd;
+	logic [9:0] shoot_x;
+	logic [8:0] shoot_y;
+	logic shot, gun_cd;
 	gun #(.BIN_W(6), .BIN_SIZE(10)) gun0 (
 		.clk(CLOCK_50), .reset,
-		.start(~KEY[0]),
 		.x, .y,
 		.bin_x, .bin_y, .button_left,
 		.shoot_x, .shoot_y, .shot,
-		.render(rc),
+		.render(render_crosshair),
 		.cd(gun_cd)
 	);
 
@@ -81,9 +94,9 @@ module DE1_SoC (
 		FPGA_I2C_SCLK
 	);
 
-	wire aud_write;
-	wire [23:0] aud_write_d;
-	wire aud_write_ready;
+	logic aud_write;
+	logic [23:0] aud_write_d;
+	logic aud_write_ready;
 	audio_codec codec(
 		.clk(CLOCK_50),
 		.reset,
@@ -103,9 +116,9 @@ module DE1_SoC (
 	gunshot_player gp (.clk(CLOCK_50), .reset, .shot, .aud_write_ready, .aud_write, .aud_write_d);
 	
 	// FINAL RENDER OR
-	assign render = rc | re;
+	assign render = render_crosshair | render_enemy;
 	assign r = render ? 8'd255 : 8'd0;
-	assign g = rc ? 8'd255 : 8'd0;
+	assign g = render_crosshair ? 8'd255 : 8'd0;
 	assign b = g;
 	
 	assign HEX0 = '1;
@@ -114,7 +127,9 @@ module DE1_SoC (
 	assign HEX3 = '1;
 	assign HEX4 = '1;
 	assign HEX5 = '1;
+
 	assign reset = SW[9];
+	assign start = ~KEY[0];
 
 	assign LEDR[0] = gun_cd;
 	assign LEDR[9] = reset;
