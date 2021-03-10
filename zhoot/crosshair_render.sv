@@ -11,6 +11,7 @@
  *   render - 1 if pixel (x, y) is to be rendered white, 0 if black
 */
 module crosshair_render (
+    input logic clk,
     input logic [9:0] x,
     input logic [8:0] y,
     input logic [9:0] x_me,
@@ -26,12 +27,13 @@ module crosshair_render (
     logic [LOG_D-1:0] y_ind;
     logic oob;
 
-    always_comb begin
-        x_ind = LOG_D'(x - x_me);
-        y_ind = LOG_D'(y - y_me);
-        oob = (x < x_me) | (x >= x_me + D) | (y < y_me) | (y >= y_me + D);
-        render = oob ? 1'b0 : array[y_ind][x_ind];
+    always_ff @(posedge clk) begin
+        x_ind <= LOG_D'(x - x_me);
+        y_ind <= LOG_D'(y - y_me);
+        oob <= (x < x_me) | (x >= x_me + D) | (y < y_me) | (y >= y_me + D);
     end
+
+    always_comb render = oob ? 1'b0 : array[y_ind][x_ind];
 
     initial begin
         array[0] =  { 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b1, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0 };

@@ -1,15 +1,5 @@
-# Ignore everything except
-*
-
-# Git stuff
-!.git*
-
-# subdirectories pattern
-!*/
-
-# But verilog src files
-!*.v
-!*.sv
-
-# And assets
-!assets/*
+db/*
+simulation/*
+output_files/*
+incremental_db/*
+greybox_tmp/*

@@ -1,6 +1,6 @@
 import enemy_def::*;
 
-/* Combinatorial logic for rendering an enemy.
+/* Renders an enemy. 
  * Assumes coordinates are in range and valid i.e. y < 512-D (this will result in overflow)
  *
  * Inputs:
@@ -14,6 +14,7 @@ import enemy_def::*;
  *   render - 1 if pixel (x, y) is to be rendered white, 0 if black
 */
 module enemy_render (
+    input logic clk,
     input logic [9:0] x,
     input logic [8:0] y,
     input enemy_state_t state,
@@ -31,17 +32,18 @@ module enemy_render (
     logic [LOG_D-1:0] y_ind;
     logic oob;
 
-    always_comb begin
-        x_ind = LOG_D'(x - x_me);
-        y_ind = LOG_D'(y - y_me);
-        oob = (x < x_me) | (x >= x_me + D) | (y < y_me) | (y >= y_me + D);
-        
+    always_ff @(posedge clk) begin
+        x_ind <= LOG_D'(x - x_me);
+        y_ind <= LOG_D'(y - y_me);
+        oob <= (x < x_me) | (x >= x_me + D) | (y < y_me) | (y >= y_me + D);
+    end
+
+    always_comb
         case (state)
             DEAD: render = 1'b0;
             ALIVE: render = oob ? 1'b0 : alive[y_ind][x_ind];
             DYING: render = oob ? 1'b0 : dying[y_ind][x_ind];
-        endcase 
-    end
+        endcase
 
     initial begin
         alive[0] =  { 1'b1, 1'b1, 1'b1, 1'b1, 1'b1, 1'b1, 1'b1, 1'b1, 1'b1, 1'b1, 1'b1, 1'b1, 1'b1, 1'b1, 1'b1, 1'b1, 1'b1, 1'b1, 1'b1, 1'b1, 1'b1, 1'b1, 1'b1, 1'b1, 1'b1, 1'b1, 1'b1, 1'b1, 1'b1, 1'b1, 1'b1, 1'b1, 1'b1, 1'b1, 1'b1, 1'b1, 1'b1, 1'b1, 1'b1, 1'b1, 1'b1, 1'b1, 1'b1, 1'b1, 1'b1, 1'b1, 1'b1, 1'b1, 1'b1, 1'b1, 1'b1, 1'b1, 1'b1, 1'b1, 1'b1, 1'b1, 1'b1, 1'b1, 1'b1, 1'b1, 1'b1, 1'b1, 1'b1, 1'b1 };
@@ -177,6 +179,7 @@ module enemy_render (
 endmodule
 
 module enemy_render_test();
+    logic clk;
     logic [9:0] x, x_me;
     logic [8:0] y, y_me;
     enemy_state_t state;
@@ -184,21 +187,28 @@ module enemy_render_test();
 
     enemy_render dut (.*);
 
+    // Setup clock
+	parameter t = 10;
+	initial begin
+        clk <= 0;
+        forever #(t/2) clk <= ~clk;
+    end
+
     initial begin
         state = ALIVE;
         x_me = 10'd69; y_me = 9'd96;
         // out of bounds
         x = 10'd0; y = 9'd0;
-        #1; assert(!render);
+        @(posedge clk); #1; assert(!render);
         // top left corner
         x = 10'd69; y = 9'd96;
-        #1; assert(render);
+        @(posedge clk); #1; assert(render);
         // second row
         x = 10'd69; y = 9'd97;
-        #1; assert(render);
+        @(posedge clk); #1; assert(render);
         // (13, 9) location of first 0
         x = 10'd82; y = 9'd105;
-        #1; assert(!render);
+        @(posedge clk); #1; assert(!render);
         $stop;
     end
 endmodule
