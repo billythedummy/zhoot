@@ -45,3 +45,45 @@ module score (
 
     assign render = (|render_digits) | render_scoretxt;
 endmodule
+
+module score_test ();
+    logic clk, reset, killed, render;
+    logic [9:0] x;
+    logic [8:0] y;
+
+    score dut (.*);
+
+        // Setup clock
+	parameter t = 10;
+	initial begin
+        clk <= 0;
+        forever #(t/2) clk <= ~clk;
+    end
+
+    integer i, j, k;
+    initial begin
+        // test: check overflow and saturating behaviour of counters
+        reset = 1;
+        @(posedge clk); #1;
+        reset = 0; killed = 1;
+        for (int i = 0; i < 10; i++) begin
+            for (int j = 0; j < 10; j++) begin
+                for (int k = 0; k < 10; k++) begin
+                    #1;
+                    assert(dut.cnt[0] == 4'(k));
+                    assert(dut.cnt[1] == 4'(j));
+                    assert(dut.cnt[2] == 4'(i));
+                    @(posedge clk);
+                end
+            end
+        end
+        #1;
+        // test saturation
+        @(posedge clk); @(posedge clk); @(posedge clk);
+        #1;
+        assert(dut.cnt[0] == 4'd9);
+        assert(dut.cnt[1] == 4'd9);
+        assert(dut.cnt[2] == 4'd9);
+        $stop;
+    end
+endmodule
