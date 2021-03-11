@@ -5,7 +5,7 @@ module enemy (
     // render coords
     input logic [9:0] x, shoot_x,
     input logic [8:0] y, shoot_y,
-    input logic shot,
+    input logic shot, shot_blocked,
     // spawn inputs
     input logic spawn,
     // assumes write_x_d is in range
@@ -70,7 +70,7 @@ module enemy (
 
     // outputs
     assign curr_y = y_ff;
-    assign killed = alive & shot 
+    assign killed = alive & shot & ~shot_blocked
         & shoot_x >= curr_x - HALF_ENEMY_D
         & shoot_x < curr_x + HALF_ENEMY_D
         & shoot_y >= curr_y - HALF_ENEMY_D

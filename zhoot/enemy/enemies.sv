@@ -44,13 +44,32 @@ module enemies #(parameter N_ENEMY=8) (
     logic [N_ENEMY-1:0] render_all;
     logic [N_ENEMY-1:0] killed_all;
     logic [N_ENEMY-1:0] spawned_all;
+    logic [N_ENEMY-1:0] shot_blocked_all;
+    // first enemy highest shot priority
+    assign shot_blocked_all[0] = 1'b0;
+    enemy enemy_0 (
+        .clk, .reset(begin_reset),
+        .x, .y,
+        .shoot_x, .shoot_y, .shot(shot_valid), .shot_blocked(shot_blocked_all[0]),
+        .spawn(spawn[0]),
+        .write_x_d,
+        .move,
+        .curr_y(enemy_y[0]),
+        .render(render_all[0]),
+        .killed(killed_all[0]),
+        .alive(enemy_alive[0]),
+        .spawned(spawned_all[0])
+    );
+    // resolving shot overlapping pixels: 
+    // enemies are only killed if no enemy with lower index than it was also killed 
     genvar i;
     generate
-        for (i = 0; i < N_ENEMY; i++) begin : gen_enemies
+        for (i = 1; i < N_ENEMY; i++) begin : gen_enemies
+            assign shot_blocked_all[i] = |killed_all[i-1:0];
             enemy enemy_i (
                 .clk, .reset(begin_reset),
                 .x, .y,
-                .shoot_x, .shoot_y, .shot(shot_valid),
+                .shoot_x, .shoot_y, .shot(shot_valid), .shot_blocked(shot_blocked_all[i]),
                 .spawn(spawn[i]),
                 .write_x_d,
                 .move,
