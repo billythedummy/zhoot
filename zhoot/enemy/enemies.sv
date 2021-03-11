@@ -39,6 +39,8 @@ module enemies #(parameter N_ENEMY=8) (
     logic [9:0] write_x_d;
     logic move;
     assign move = ps == S_GAME ? move_always : 1'b0;
+    logic shot_valid;
+    assign shot_valid = shot & ps == S_GAME;
     logic [N_ENEMY-1:0] render_all;
     logic [N_ENEMY-1:0] killed_all;
     logic [N_ENEMY-1:0] spawned_all;
@@ -48,7 +50,7 @@ module enemies #(parameter N_ENEMY=8) (
             enemy enemy_i (
                 .clk, .reset(begin_reset),
                 .x, .y,
-                .shoot_x, .shoot_y, .shot,
+                .shoot_x, .shoot_y, .shot(shot_valid),
                 .spawn(spawn[i]),
                 .write_x_d,
                 .move,

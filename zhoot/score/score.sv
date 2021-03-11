@@ -23,7 +23,7 @@ module score (
 
     // ones
     upctr #(.W(4), .L(9)) ones_ctr (.clk, .reset, .inc(killed & ~max), .cnt(cnt[0]));
-    digit_render #(.TOP_LEFT_X(TOP_LEFT_X + SCORETXT_W), .TOP_LEFT_Y(TOP_LEFT_Y)) ones_dr (
+    digit_render #(.TOP_LEFT_X(TOP_LEFT_X + SCORETXT_W + (N_DIGITS-1)*DIGIT_W), .TOP_LEFT_Y(TOP_LEFT_Y)) ones_dr (
         .clk, .x, .y,
         .digit(cnt[0]), .render(render_digits[0])
     );
@@ -34,7 +34,7 @@ module score (
     generate
         for (i = 1; i < N_DIGITS; i++) begin : gen_digits
             upctr #(.W(4), .L(9)) ctr (.clk, .reset, .inc(overflow[i-1] & ~max), .cnt(cnt[i]));
-            digit_render #(.TOP_LEFT_X(TOP_LEFT_X + SCORETXT_W + (N_DIGITS-i)*DIGIT_W), .TOP_LEFT_Y(TOP_LEFT_Y)) ones_dr (
+            digit_render #(.TOP_LEFT_X(TOP_LEFT_X + SCORETXT_W + (N_DIGITS-1-i)*DIGIT_W), .TOP_LEFT_Y(TOP_LEFT_Y)) ones_dr (
                 .clk, .x, .y,
                 .digit(cnt[i]), .render(render_digits[i])
             );
