@@ -1,3 +1,22 @@
+/* Top level controller for gun. Receives input from PS/2 driver, does state management and rendering
+ *
+ * Inputs:
+ *   clk - 50MHz clock
+ *   reset - global reset
+ *   start - start the game
+ *   x - x-coordinate of current pixel to render
+ *   y - y-coordinate of current pixel to render
+ *   bin_x - x-index of current mouse bin
+ *   bin_y - y-index of current mouse bin
+ *   button_left - 1 if LMB clicked
+ *
+ * Outputs:
+ *   shoot_x - x-coordinate of pixel being shot at
+ *   shoot_y - y-coordinate of pixel being shot at
+ *   shot - did the user shoot in this clock cycle
+ *   render - 1 if pixel (x, y) is to be rendered as an enemy, 0 if black
+ *   cd - 1 if gun is currently on cooldown, 0 otherwise
+*/
 module gun #(parameter BIN_W=6, BIN_SIZE=10) (
     input logic clk, reset,
     input logic [9:0] x,

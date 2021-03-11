@@ -1,3 +1,15 @@
+/* Top level controller for scoreboard. State management and rendering
+ *
+ * Inputs:
+ *   clk - 50MHz clock
+ *   reset - reset score to 0
+ *   killed - 1 if an enemy was killed in this clock cycle, 0 otherwise
+ *   x - x-coordinate of current pixel to render
+ *   y - y-coordinate of current pixel to render
+ *
+ * Outputs:
+ *   render - 1 if pixel (x, y) is to be rendered as an enemy, 0 if black
+*/
 module score (
     input logic clk, reset,
     input logic killed,

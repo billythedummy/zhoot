@@ -1,3 +1,13 @@
+/* Renders the white "SCORE:" text
+ *
+ * Inputs:
+ *   clk - 50MHz clock
+ *   x - x-coordinate of current pixel to render
+ *   y - y-coordinate of current pixel to render
+ *
+ * Outputs:
+ *   render - 1 if pixel (x, y) is to be rendered white, 0 if black
+*/
 module scoretxt_render #(parameter TOP_LEFT_X=0, TOP_LEFT_Y=0) (
     input logic clk,
     input logic [9:0] x,

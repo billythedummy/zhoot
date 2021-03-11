@@ -1,3 +1,15 @@
+/* Plays the gunshot audio by outputting samples to the DAC
+ *
+ * Inputs:
+ *   clk - 50MHz clock
+ *   reset - global reset
+ *   shot - user shot the gun this clock cycle
+ *   aud_write_ready - DAC write ready signal
+ *
+ * Outputs:
+ *   aud_write - assert high to write to DAC
+ *   aud_write_d - sample to write to DAC
+*/
 module gunshot_player (
     input logic clk, reset,
     input logic shot,

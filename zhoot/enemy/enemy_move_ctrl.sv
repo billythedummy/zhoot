@@ -1,3 +1,13 @@
+/* Timers for controlling when to output move command to enemy,
+ * increasing speed/difficulty as time passes
+ *
+ * Inputs:
+ *   clk - 50MHz clock
+ *   reset - resets the timers and game difficulty
+ *
+ * Outputs:
+ *   move - 1 if enemy should move this clock tick, 0 otherwise
+*/
 module enemy_move_ctrl (
     input logic clk, reset,
     output logic move
@@ -5,6 +15,7 @@ module enemy_move_ctrl (
     localparam MOVE_PERIOD_BASE_50M = 20_000_000;
     localparam LOG_MOVE_PERIOD_50M = $clog2(MOVE_PERIOD_BASE_50M);
     localparam MOVE_PERIOD_MAX_SUB_50M = 18_000_000;
+    // fastest possible period is MOVE_PERIOD_BASE_50M - MOVE_PERIOD_MAX_SUB_50M
     localparam LOG_MOVE_PERIOD_INC_DELAY_50M = 6;
     localparam MOVE_PERIOD_INC_DELAY_50M = 2**LOG_MOVE_PERIOD_INC_DELAY_50M-1; // decrement move period every this ticks
 

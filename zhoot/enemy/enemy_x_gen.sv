@@ -1,3 +1,15 @@
+/* "Random" generator of starting x-coordinates of enemies
+ * Really just a hardcoded array of random-looking cycling x-coordinates
+ * that is somewhat evenly distributed across the width of the screen
+ *
+ * Inputs:
+ *   clk - 50MHz clock
+ *   reset - resets this module
+ *   next - 1 to cycle to next x-coordinate
+ *
+ * Outputs:
+ *   x - current x-coordinate in the cycle that is outputted
+*/
 module enemy_x_gen (
     input logic clk, reset, next,
     output logic [9:0] x

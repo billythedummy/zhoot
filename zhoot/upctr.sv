@@ -1,4 +1,13 @@
-// wrapping up counter with increment and reset signal and custom max L
+/* Wrapping up counter with increment and reset signal and custom max L
+ *
+ * Inputs:
+ *   clk - 50MHz clock
+ *   reset
+ *   inc - assert high to increment this counter
+ *
+ * Outputs:
+ *   cnt - current count
+*/
 module upctr #(parameter W=3, L=2**W - 1) (
     input wire clk, reset,
     input wire inc,

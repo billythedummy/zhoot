@@ -4,6 +4,7 @@ import enemy_def::*;
  * Assumes coordinates are in range and valid i.e. y < 512-D (this will result in overflow)
  *
  * Inputs:
+ *   clk    - 50MHz clock 
  *   x      - x-coordinate of current pixel to render
  *   y      - y-coordinate of current pixel to render
  *   state  - current state of this enemy

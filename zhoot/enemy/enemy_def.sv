@@ -1,3 +1,5 @@
+/* Common definitions for use in enemy subsystem
+*/
 package enemy_def;
 
     typedef enum {

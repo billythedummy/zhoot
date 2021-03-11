@@ -1,7 +1,8 @@
-/* Combinatorial logic for rendering the crosshair.
+/* Render the crosshair cursor
  * Assumes coordinates are in range and valid i.e. y < 512-D (this will result in overflow)
  *
  * Inputs:
+ *   clk    - 50MHz clock
  *   x      - x-coordinate of current pixel to render
  *   y      - y-coordinate of current pixel to render
  *   x_me   - x-coordinate of top left of mouse

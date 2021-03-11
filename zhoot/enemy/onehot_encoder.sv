@@ -1,4 +1,12 @@
-// Note: 0 maps to 0..01
+/* Encodes unsigned to onehot
+ * Note: 0 maps to 0..01
+ *
+ * Inputs:
+ *   in - unsigned input
+ *
+ * Outputs:
+ *   out - onehot output
+*/
 module onehot_encoder #(parameter IN_W=3) (
     input logic [IN_W-1:0] in,
     output logic [2**IN_W-1:0] out

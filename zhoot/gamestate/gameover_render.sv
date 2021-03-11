@@ -1,3 +1,13 @@
+/* Renders the "GAME OVER" text
+ *
+ * Inputs:
+ *   clk - 50MHz clock
+ *   x - x-coordinate of current pixel to render
+ *   y - y-coordinate of current pixel to render
+ *
+ * Outputs:
+ *   render - 1 if pixel (x, y) is to be rendered as white, 0 if black
+*/
 module gameover_render (
     input logic clk,
     input logic [9:0] x,

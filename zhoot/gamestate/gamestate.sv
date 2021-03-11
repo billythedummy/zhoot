@@ -1,3 +1,18 @@
+/* Game state management. 2 states: S_OVER = game over, S_GAME = game ongoing
+ *
+ * Inputs:
+ *   clk - 50MHz clock
+ *   reset - global reset
+ *   start - start the game
+ *   x - x-coordinate of current pixel to render
+ *   y - y-coordinate of current pixel to render
+ *   enemy_alive - bitarray of whether each enemy is dead or alive
+ *   enemy_y - current y coordinate of each enemy
+ *
+ * Outputs:
+ *   gameover - is game over
+ *   render - 1 if pixel (x, y) is to be rendered as white, 0 if black
+*/
 module gamestate #(parameter N_ENEMY=8) (
     input logic clk, reset, start,
     input logic [9:0] x,

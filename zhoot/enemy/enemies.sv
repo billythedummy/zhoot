@@ -1,3 +1,22 @@
+/* Top level controller for all enemies. Spawns, render, determine kills and general state management
+ *
+ * Inputs:
+ *   clk - 50MHz clock
+ *   reset - global reset
+ *   start - start the game
+ *   x - x-coordinate of current pixel to render
+ *   shoot_x - x-coordinate of pixel being shot at
+ *   y - y-coordinate of current pixel to render
+ *   shoot_y - y-coordinate of pixel being shot at
+ *   shot - did the user shoot in this clock cycle
+ *   gameover - is game over
+ *
+ * Outputs:
+ *   killed - 1 if an enemy was killed, 0 otherwise
+ *   render - 1 if pixel (x, y) is to be rendered as an enemy, 0 if black
+ *   enemy_alive - bitarray of whether each enemy is dead or alive
+ *   enemy_y - current y coordinate of each enemy
+*/
 module enemies #(parameter N_ENEMY=8) (
     input logic clk, reset, start,
     input logic [9:0] x, shoot_x,
@@ -82,7 +101,7 @@ module enemies #(parameter N_ENEMY=8) (
         end
     endgenerate
 
-
+    // tie shot to next to add some randomness
     enemy_x_gen emx (.clk, .reset(starting_game), .next(spawned | shot), .x(write_x_d));
 
     logic move_always;

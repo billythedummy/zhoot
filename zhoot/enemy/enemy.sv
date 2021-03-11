@@ -1,5 +1,28 @@
 import enemy_def::*;
 
+/* A single enemy
+ * state management, shot detection and rendering
+ *
+ * Inputs:
+ *   clk - 50MHz clock
+ *   reset - resets this module to S_DEAD
+ *   x      - x-coordinate of current pixel to render
+ *   shoot_x - x-coordinate of pixel being shot at
+ *   y - y-coordinate of current pixel to render
+ *   shoot_y - y-coordinate of pixel being shot at
+ *   shot - did the user shoot in this clock cycle
+ *   shot_blocked - 1 if current shot is blocked by another enemy, 0 otherwise
+ *   spawn - try to spawn this enemy
+ *   write_x_d - x_coordinate to spawn with
+ *   move - 1 to move downwards 
+ *
+ * Outputs:
+ *   curr_y - this enemy's current y coordinate
+ *   render - 1 if pixel (x, y) is to be rendered as an enemy, 0 if black
+ *   killed - 1 if this enemy was killed this clock cycle, 0 otherwise
+ *   alive - 1 if this enemy is currently alive
+ *   spawned - 1 if this enemy was spawned this clock cycle
+*/
 module enemy (
     input logic clk, reset,
     // render coords
@@ -17,9 +40,9 @@ module enemy (
     output logic alive, spawned
 );
     localparam START_Y = 9'd48;
-    localparam STEP_Y = 9'd10;
+    localparam STEP_Y = 9'd10; // move this many px downwards when move=1
     localparam DYING_W = 25;
-    localparam DYING_TICKS = 24_999_999;
+    localparam DYING_TICKS = 24_999_999; // how many ticks to hold dying image for
 
     logic respawn;
     assign respawn = spawn & ~alive;
