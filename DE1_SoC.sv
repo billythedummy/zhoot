@@ -36,7 +36,7 @@ module DE1_SoC (
 	logic reset;
 	logic start;
 	logic render_white;
-	logic render_enemy, render_crosshair, render_gameover;
+	logic render_enemy, render_crosshair, render_gameover, render_score;
 	logic [9:0] x;
 	logic [8:0] y;
 	logic [7:0] r, g, b;
@@ -46,6 +46,7 @@ module DE1_SoC (
 			 .VGA_R, .VGA_G, .VGA_B, .VGA_BLANK_N,
 			 .VGA_CLK, .VGA_HS, .VGA_SYNC_N, .VGA_VS);
 
+	// enemies
 	localparam N_ENEMY = 8;
 	logic killed;
 	logic [N_ENEMY-1:0] enemy_alive;
@@ -61,6 +62,7 @@ module DE1_SoC (
 		.enemy_y
 	);
 
+	// gamestate
 	logic gameover;
 	gamestate #(.N_ENEMY(N_ENEMY)) gs (
 		.clk(CLOCK_50), .reset, .start,
@@ -70,7 +72,17 @@ module DE1_SoC (
 		.gameover,
 		.render(render_gameover)
 	);
+
+	// score
+	score sc (
+		.clk(CLOCK_50),
+		.reset(reset | start),
+		.killed,
+		.x, .y,
+		.render(render_score)
+	);
 	
+	// mouse and gun
 	logic button_left;
 	logic [5:0] bin_x, bin_y;
 	ps2 #(.WIDTH(64), .HEIGHT(48), .BIN(10), .HYSTERESIS(3)) mouse (
@@ -92,7 +104,7 @@ module DE1_SoC (
 	);
 	assign render_crosshair = gameover ? 1'b0 : render_crosshair_always;
 
-	// AUDIO
+	// audio
 	clock_generator aud_clock_gen (
 		CLOCK2_50,
 		reset,
@@ -128,7 +140,7 @@ module DE1_SoC (
 	gunshot_player gp (.clk(CLOCK_50), .reset, .shot, .aud_write_ready, .aud_write, .aud_write_d);
 	
 	// final render logic
-	assign render_white = render_crosshair | render_gameover;
+	assign render_white = render_crosshair | render_gameover | render_score;
 	assign r = (render_white | render_enemy) ? 8'd255 : 8'd0;
 	assign g = render_white ? 8'd255 : 8'd0;
 	assign b = g;
