@@ -7,7 +7,7 @@ module enemies #(parameter N_ENEMY=8) (
     output logic killed,
     output logic render,
     output logic [N_ENEMY-1:0] enemy_alive,
-    output logic [8:0] enemy_y [0:N_ENEMY-1]
+    output logic [8:0] enemy_y [N_ENEMY-1:0]
 );
     localparam LOG_N_ENEMY = $clog2(N_ENEMY);
     // cooldown between new enemies spawning
@@ -38,6 +38,7 @@ module enemies #(parameter N_ENEMY=8) (
     assign spawn = should_spawn ? addr_fifo_r_data : N_ENEMY'(0);
     logic [9:0] write_x_d;
     logic move;
+    assign move = ps == S_GAME ? move_always : 1'b0;
     logic [N_ENEMY-1:0] render_all;
     logic [N_ENEMY-1:0] killed_all;
     logic [N_ENEMY-1:0] spawned_all;
@@ -63,7 +64,8 @@ module enemies #(parameter N_ENEMY=8) (
 
     enemy_x_gen emx (.clk, .reset(starting_game), .next(spawned | shot), .x(write_x_d));
 
-    enemy_move_ctrl emc (.clk, .reset(starting_game), .move);
+    logic move_always;
+    enemy_move_ctrl emc (.clk, .reset(starting_game), .move(move_always));
 
     // upctr for cooldown between enemies spawning
     logic [LOG_RESPAWN_TICKS-1:0] respawn_ticks;

@@ -35,8 +35,8 @@ module DE1_SoC (
 
 	logic reset;
 	logic start;
-	logic render;
-	logic render_enemy, render_crosshair;
+	logic render_white;
+	logic render_enemy, render_crosshair, render_gameover;
 	logic [9:0] x;
 	logic [8:0] y;
 	logic [7:0] r, g, b;
@@ -49,16 +49,26 @@ module DE1_SoC (
 	localparam N_ENEMY = 8;
 	logic killed;
 	logic [N_ENEMY-1:0] enemy_alive;
-	logic [8:0] enemy_y [0:N_ENEMY-1];
-	enemies nme (
+	logic [8:0] enemy_y [N_ENEMY-1:0];
+	enemies #(.N_ENEMY(N_ENEMY)) nme (
 		.clk(CLOCK_50), .reset, .start,
 		.x, .y,
 		.shoot_x, .shoot_y, .shot,
-		.gameover(1'b0),
+		.gameover,
 		.killed,
 		.render(render_enemy),
 		.enemy_alive,
 		.enemy_y
+	);
+
+	logic gameover;
+	gamestate #(.N_ENEMY(N_ENEMY)) gs (
+		.clk(CLOCK_50), .reset, .start,
+		.x, .y,
+		.enemy_alive,
+		.enemy_y,
+		.gameover,
+		.render(render_gameover)
 	);
 	
 	logic button_left;
@@ -71,14 +81,16 @@ module DE1_SoC (
 	logic [9:0] shoot_x;
 	logic [8:0] shoot_y;
 	logic shot, gun_cd;
+	logic render_crosshair_always;
 	gun #(.BIN_W(6), .BIN_SIZE(10)) gun0 (
 		.clk(CLOCK_50), .reset,
 		.x, .y,
 		.bin_x, .bin_y, .button_left,
 		.shoot_x, .shoot_y, .shot,
-		.render(render_crosshair),
+		.render(render_crosshair_always),
 		.cd(gun_cd)
 	);
+	assign render_crosshair = gameover ? 1'b0 : render_crosshair_always;
 
 	// AUDIO
 	clock_generator aud_clock_gen (
@@ -115,10 +127,10 @@ module DE1_SoC (
 
 	gunshot_player gp (.clk(CLOCK_50), .reset, .shot, .aud_write_ready, .aud_write, .aud_write_d);
 	
-	// FINAL RENDER OR
-	assign render = render_crosshair | render_enemy;
-	assign r = render ? 8'd255 : 8'd0;
-	assign g = render_crosshair ? 8'd255 : 8'd0;
+	// final render logic
+	assign render_white = render_crosshair | render_gameover;
+	assign r = (render_white | render_enemy) ? 8'd255 : 8'd0;
+	assign g = render_white ? 8'd255 : 8'd0;
 	assign b = g;
 	
 	assign HEX0 = '1;
