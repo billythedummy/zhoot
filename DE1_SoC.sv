@@ -74,6 +74,8 @@ module DE1_SoC (
 	);
 
 	// score
+	// Note: score will reset (but not game) if user
+	// presses key in the middle of a game
 	score sc (
 		.clk(CLOCK_50),
 		.reset(reset | start),
