@@ -1,5 +1,5 @@
 '''*******************************************************************************
-    Authors:         Haytham Shaban, Sam Waddell
+    Authors:         Original by Haytham Shaban, Sam Waddell. Modified by billythedummy
     ------------------------------------------------------------------------
     Project:        image_to_SV_array.py
     ------------------------------------------------------------------------
